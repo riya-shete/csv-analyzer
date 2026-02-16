@@ -150,15 +150,9 @@ STORAGES = {
 # CORS CONFIGURATION
 # =========================
 
-CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS',
-    default='http://csvanalysis-frontend-fgrga7-96e962-72-61-227-173.traefik.me',
-    cast=Csv()
-)
-
-CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=bool)
 
 
 # =========================
