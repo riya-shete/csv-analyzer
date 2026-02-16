@@ -47,7 +47,10 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'frontend_build',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,14 +90,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = []
+
+# Only include frontend_build if it exists (production Docker build)
+FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
+STATICFILES_DIRS = [FRONTEND_BUILD_DIR] if FRONTEND_BUILD_DIR.exists() else []
 
 # WhiteNoise for serving static files in production
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+if not DEBUG:
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 
 # Media files (uploaded CSVs)
 MEDIA_URL = '/media/'
@@ -120,7 +127,7 @@ OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
 OPENROUTER_MODEL = config('OPENROUTER_MODEL', default='stepfun/step-3.5-flash:free')
 
 # File upload settings
-FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 26 * 1024 * 1024  # 26 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 26 * 1024 * 1024  # 26 MB
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

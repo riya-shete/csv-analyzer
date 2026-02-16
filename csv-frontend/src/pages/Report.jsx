@@ -125,6 +125,8 @@ export default function Report() {
 
     return (
         <div className="report-page container">
+            <Link to="/" className="back-link">&larr; Back to Reports</Link>
+
             {/* Header */}
             <div className="report-header">
                 <div>
@@ -169,8 +171,12 @@ export default function Report() {
                 </button>
                 <button
                     className={`tab ${activeTab === 'insights' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('insights')}
-                    disabled={!report.insights}
+                    onClick={() => {
+                        setActiveTab('insights');
+                        if (!report.insights && !generating) {
+                            handleGenerateInsights();
+                        }
+                    }}
                 >
                     Insights
                 </button>

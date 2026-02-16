@@ -2,6 +2,19 @@
     max-width: 960px;
 }
 
+.back-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    transition: color 0.15s;
+}
+
+.back-link:hover {
+    color: var(--accent-hover);
+}
+
 .report-header {
     display: flex;
     justify-content: space-between;

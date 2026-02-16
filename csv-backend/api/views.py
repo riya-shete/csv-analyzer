@@ -44,10 +44,10 @@ def upload_csv(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Validate file size (max 10MB)
-    if file.size > 10 * 1024 * 1024:
+    # Validate file size (max 25MB)
+    if file.size > 25 * 1024 * 1024:
         return Response(
-            {'error': 'File too large. Maximum size is 10 MB.'},
+            {'error': 'File too large. Maximum size is 25 MB.'},
             status=status.HTTP_400_BAD_REQUEST,
         )
 

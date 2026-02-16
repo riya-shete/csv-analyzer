@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// In production (Docker), frontend is served from same origin as backend → use relative path
+// In development, Vite runs on :5173 and backend on :8000
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:8000/api');
 
 const api = axios.create({
     baseURL: API_BASE,

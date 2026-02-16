@@ -31,10 +31,12 @@ export default function Home() {
     const validateFile = (f) => {
         if (!f) return 'Please select a file.';
         if (!f.name.toLowerCase().endsWith('.csv')) return 'Only CSV files are accepted.';
-        if (f.size > 10 * 1024 * 1024) return 'File size must be under 10 MB.';
+        if (f.size > 25 * 1024 * 1024) return 'File size must be under 25 MB.';
         if (f.size === 0) return 'The file is empty.';
         return '';
     };
+
+    const isLargeFile = file && file.size > 10 * 1024 * 1024;
 
     const handleFile = (f) => {
         const err = validateFile(f);
@@ -132,12 +134,18 @@ export default function Home() {
                                 <line x1="12" y1="3" x2="12" y2="15" />
                             </svg>
                             <p className="drop-text">Drag and drop your CSV file here, or click to browse</p>
-                            <p className="drop-hint">Maximum file size: 10 MB</p>
+                            <p className="drop-hint">Maximum file size: 25 MB</p>
                         </div>
                     )}
                 </div>
 
                 {error && <div className="error-message">{error}</div>}
+
+                {isLargeFile && !error && (
+                    <div className="info-message">
+                        Large dataset detected. Processing may take longer. Insights are generated using aggregated statistics for performance.
+                    </div>
+                )}
 
                 <button
                     className="btn btn-primary upload-btn"

@@ -96,7 +96,7 @@ def generate_insights(report) -> str:
     """
     api_key = settings.OPENROUTER_API_KEY
     if not api_key:
-        return "⚠️ OpenRouter API key not configured. Please set OPENROUTER_API_KEY in your environment."
+        return "OpenRouter API key not configured. Please set OPENROUTER_API_KEY in your environment."
 
     # Build a concise data summary for the prompt
     data_summary = _build_data_summary(report)
@@ -112,22 +112,22 @@ def generate_insights(report) -> str:
 
 Provide your analysis in this format:
 
-## 📊 Data Overview
+## Data Overview
 Brief summary of the dataset.
 
-## 📈 Key Trends
+## Key Trends
 - List 3-5 notable patterns or trends
 
-## ⚠️ Outliers & Anomalies
+## Outliers & Anomalies
 - Any unusual values or patterns worth investigating
 
-## 🔍 What to Check Next
+## What to Check Next
 - 2-3 recommended follow-up analyses
 
-## 💡 Quick Recommendations
+## Quick Recommendations
 - 2-3 actionable suggestions based on the data
 
-Keep it concise and actionable. Use bullet points."""
+Keep it concise and actionable. Use bullet points. Do not use any emojis."""
 
     try:
         response = requests.post(
@@ -156,14 +156,14 @@ Keep it concise and actionable. Use bullet points."""
             return result['choices'][0]['message']['content']
         else:
             logger.error(f"Unexpected API response: {result}")
-            return "⚠️ Failed to generate insights. Unexpected response from the AI model."
+            return "Failed to generate insights. Unexpected response from the AI model."
 
     except requests.exceptions.Timeout:
         logger.error("OpenRouter API timeout")
-        return "⚠️ The AI service timed out. Please try again."
+        return "The AI service timed out. Please try again."
     except requests.exceptions.RequestException as e:
         logger.error(f"OpenRouter API error: {e}")
-        return f"⚠️ Failed to connect to AI service: {str(e)}"
+        return f"Failed to connect to AI service: {str(e)}"
 
 
 def generate_follow_up_answer(report, question: str) -> str:
@@ -172,7 +172,7 @@ def generate_follow_up_answer(report, question: str) -> str:
     """
     api_key = settings.OPENROUTER_API_KEY
     if not api_key:
-        return "⚠️ OpenRouter API key not configured."
+        return "OpenRouter API key not configured."
 
     data_summary = _build_data_summary(report)
 
@@ -217,11 +217,11 @@ Answer concisely and specifically based on the data available."""
 
         if 'choices' in result and len(result['choices']) > 0:
             return result['choices'][0]['message']['content']
-        return "⚠️ Failed to generate answer."
+        return "Failed to generate answer."
 
     except requests.exceptions.RequestException as e:
         logger.error(f"OpenRouter API error: {e}")
-        return f"⚠️ AI service error: {str(e)}"
+        return f"AI service error: {str(e)}"
 
 
 def check_llm_health() -> dict:
