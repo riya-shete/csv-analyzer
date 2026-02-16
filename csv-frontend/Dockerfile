@@ -12,8 +12,7 @@ RUN npm ci
 COPY . .
 
 # Build with backend API URL
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_API_URL=http://csvanalysis-backend-9u5tnu-3e9c9e-72-61-227-173.traefik.me/api
 
 RUN npm run build
 
@@ -32,14 +31,14 @@ RUN echo 'server { \
     index index.html; \
     \
     location / { \
-        try_files $uri $uri/ /index.html; \
+    try_files $uri $uri/ /index.html; \
     } \
     \
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ { \
-        expires 1y; \
-        add_header Cache-Control "public, immutable"; \
+    expires 1y; \
+    add_header Cache-Control "public, immutable"; \
     } \
-}' > /etc/nginx/conf.d/default.conf
+    }' > /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
