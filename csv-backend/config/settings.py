@@ -88,12 +88,15 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
+STATIC_URL = '/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Only include frontend_build if it exists (production Docker build)
 FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
-STATICFILES_DIRS = [FRONTEND_BUILD_DIR] if FRONTEND_BUILD_DIR.exists() else []
+
+STATICFILES_DIRS = []
+if FRONTEND_BUILD_DIR.exists():
+    STATICFILES_DIRS.append(FRONTEND_BUILD_DIR)
+
 
 # WhiteNoise for serving static files in production
 if not DEBUG:

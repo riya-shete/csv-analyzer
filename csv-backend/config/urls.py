@@ -18,5 +18,6 @@ if settings.DEBUG:
 # Catch-all: serve React's index.html for client-side routing
 # This must be LAST so API and admin routes are matched first
 urlpatterns += [
-    re_path(r'^(?!api/|admin/|static/|media/).*$', TemplateView.as_view(template_name='index.html')),
+   re_path(r'^(?!api/|admin/|static/|media/|assets/).*$', TemplateView.as_view(template_name='index.html')),
+
 ]

@@ -28,42 +28,16 @@ This project — **CSV Insights Dashboard** — demonstrates my ability to:
 ## Technical Skills
 
 ### Programming Languages
-- JavaScript
-- Python
-- SQL
-- Java
-- HTML
-- CSS
+JavaScript, Python, SQL, Java, HTML, CSS
 
 ### Frontend
-- React.js
-- Tailwind CSS
-- DOM Manipulation
-- Responsive Design
-- Vite
-- Chart.js
+React.js, Tailwind CSS, DOM Manipulation, Responsive Design, Vite, Chart.js
 
 ### Backend & Databases
-- Django
-- Django REST Framework
-- Node.js
-- FastAPI
-- RESTful APIs
-- PostgreSQL
-- MySQL
-- SQLite
-- Pandas
+Django, Django REST Framework, Node.js, FastAPI, RESTful APIs, PostgreSQL, MySQL, SQLite, Pandas
 
 ### DevOps & Tools
-- Git
-- GitHub
-- Docker (Basics)
-- Docker Compose
-- Swagger
-- Agile Methodology
-- SDLC
-- Debugging
-- Authentication Flows
+Git, GitHub, Docker (Basics), Docker Compose, Swagger, Agile Methodology, SDLC, Debugging, Authentication Flows
 
 ---
 
