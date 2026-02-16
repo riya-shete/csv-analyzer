@@ -1,0 +1,118 @@
+.status-page {
+    max-width: 600px;
+}
+
+.status-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.last-checked {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+}
+
+/* Overall Banner */
+.overall-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+
+.overall-banner.healthy {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.overall-banner.degraded {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+}
+
+.overall-banner.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.healthy .dot {
+    background: #16a34a;
+}
+
+.degraded .dot {
+    background: #d97706;
+}
+
+.error .dot {
+    background: #dc2626;
+}
+
+/* Service Cards */
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.service-card {
+    padding: 1rem 1.25rem;
+}
+
+.service-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.service-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge.healthy {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.badge.degraded {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.badge.error {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.service-detail {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+}
