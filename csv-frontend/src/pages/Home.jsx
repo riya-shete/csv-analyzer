@@ -63,7 +63,16 @@ export default function Home() {
             const res = await uploadCSV(file);
             navigate(`/report/${res.data.id}`);
         } catch (err) {
-            setError(err.response?.data?.error || 'Upload failed. Please try again.');
+            console.error('Upload error:', err);
+            if (err.response?.data?.error) {
+                setError(err.response.data.error);
+            } else if (err.code === 'ECONNABORTED') {
+                setError('Upload timed out. The file may be too large.');
+            } else if (!err.response) {
+                setError('Network error. Check that the backend server is running.');
+            } else {
+                setError('Upload failed. Please try again.');
+            }
         } finally {
             setUploading(false);
         }

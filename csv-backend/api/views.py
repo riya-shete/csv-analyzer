@@ -86,7 +86,7 @@ def upload_csv(request):
     except Exception as e:
         logger.exception("Error uploading CSV")
         return Response(
-            {'error': 'An unexpected error occurred while processing the file.'},
+            {'error': f'An unexpected error occurred: {str(e)}'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 

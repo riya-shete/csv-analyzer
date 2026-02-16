@@ -11,6 +11,17 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
+def _safe_float(val, default=0):
+    """Safely convert a value to float, handling NaN/Inf."""
+    try:
+        f = float(val)
+        if pd.isna(f) or f == float('inf') or f == float('-inf'):
+            return default
+        return f
+    except (ValueError, TypeError):
+        return default
+
+
 def parse_csv(file) -> dict:
     """
     Parse an uploaded CSV file using Pandas.
@@ -19,8 +30,12 @@ def parse_csv(file) -> dict:
     Raises ValueError if the file cannot be parsed.
     """
     try:
-        # Read CSV with pandas
-        df = pd.read_csv(file)
+        # Try reading with utf-8 first, fallback to latin-1
+        try:
+            df = pd.read_csv(file, encoding='utf-8', low_memory=False)
+        except UnicodeDecodeError:
+            file.seek(0)
+            df = pd.read_csv(file, encoding='latin-1', low_memory=False)
 
         if df.empty:
             raise ValueError("The CSV file is empty or contains no valid data.")
@@ -31,32 +46,39 @@ def parse_csv(file) -> dict:
         # Basic column statistics
         column_stats = {}
         for col in df.columns:
-            stats = {
-                'dtype': str(df[col].dtype),
-                'non_null_count': int(df[col].count()),
-                'null_count': int(df[col].isnull().sum()),
-            }
+            try:
+                stats = {
+                    'dtype': str(df[col].dtype),
+                    'non_null_count': int(df[col].count()),
+                    'null_count': int(df[col].isnull().sum()),
+                }
 
-            if pd.api.types.is_numeric_dtype(df[col]):
-                desc = df[col].describe()
-                stats.update({
-                    'mean': round(float(desc.get('mean', 0)), 2),
-                    'std': round(float(desc.get('std', 0)), 2),
-                    'min': float(desc.get('min', 0)),
-                    'max': float(desc.get('max', 0)),
-                    'median': round(float(df[col].median()), 2),
-                })
-            elif pd.api.types.is_string_dtype(df[col]):
-                stats.update({
-                    'unique_count': int(df[col].nunique()),
-                    'top_values': df[col].value_counts().head(5).to_dict(),
-                })
+                if pd.api.types.is_numeric_dtype(df[col]):
+                    desc = df[col].describe()
+                    stats.update({
+                        'mean': round(_safe_float(desc.get('mean', 0)), 2),
+                        'std': round(_safe_float(desc.get('std', 0)), 2),
+                        'min': _safe_float(desc.get('min', 0)),
+                        'max': _safe_float(desc.get('max', 0)),
+                        'median': round(_safe_float(df[col].median()), 2),
+                    })
+                elif pd.api.types.is_string_dtype(df[col]):
+                    stats.update({
+                        'unique_count': int(df[col].nunique()),
+                        'top_values': {str(k): int(v) for k, v in df[col].value_counts().head(5).items()},
+                    })
 
-            column_stats[col] = stats
+                column_stats[col] = stats
+            except Exception as e:
+                logger.warning(f"Could not compute stats for column '{col}': {e}")
+                column_stats[col] = {
+                    'dtype': str(df[col].dtype),
+                    'non_null_count': int(df[col].count()),
+                    'null_count': int(df[col].isnull().sum()),
+                }
 
         # Preview data (first 100 rows)
-        preview_df = df.head(100).fillna('')
-        # Convert numeric values to Python native types for JSON serialization
+        preview_df = df.head(100)
         preview_data = []
         for _, row in preview_df.iterrows():
             row_dict = {}
@@ -65,7 +87,11 @@ def parse_csv(file) -> dict:
                 if pd.isna(val):
                     row_dict[col] = ''
                 elif isinstance(val, (int, float)):
-                    row_dict[col] = val
+                    # Handle NaN/Inf in numeric values
+                    if pd.isna(val) or val == float('inf') or val == float('-inf'):
+                        row_dict[col] = ''
+                    else:
+                        row_dict[col] = val
                 else:
                     row_dict[col] = str(val)
             preview_data.append(row_dict)
@@ -84,6 +110,7 @@ def parse_csv(file) -> dict:
     except Exception as e:
         if isinstance(e, ValueError):
             raise
+        logger.exception(f"Error processing CSV file")
         raise ValueError(f"Error processing file: {str(e)}")
 
 

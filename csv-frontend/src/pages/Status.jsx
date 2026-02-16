@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getHealth } from '../api';
 import './Status.css';
 
@@ -46,6 +47,7 @@ export default function Status() {
 
     return (
         <div className="status-page container">
+            <Link to="/" className="back-link">← Back to Home</Link>
             <div className="status-top">
                 <h1 className="page-title">System Status</h1>
                 <button className="btn btn-secondary btn-sm" onClick={fetchHealth} disabled={loading}>
