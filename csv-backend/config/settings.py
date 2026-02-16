@@ -1,48 +1,82 @@
 """
-Django settings for CSV Insights Dashboard.
-Uses python-decouple for environment variable management.
+Django settings for CSV Insights Dashboard
+Production-ready configuration for Dokploy deployment
 """
 
 import os
 from pathlib import Path
 from decouple import config, Csv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY
-SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-dev-key-change-in-production')
-DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
-# Application definition
+# =========================
+# SECURITY SETTINGS
+# =========================
+
+SECRET_KEY = config('DJANGO_SECRET_KEY')
+
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='csvanalysis-backend-9u5tnu-3e9c9e-72-61-227-173.traefik.me',
+    cast=Csv()
+)
+
+
+# =========================
+# APPLICATIONS
+# =========================
+
 INSTALLED_APPS = [
+    # Default Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Third party
+
+    # Third-party apps
     'rest_framework',
     'corsheaders',
-    # Local
+
+    # Local apps
     'api',
 ]
 
+
+# =========================
+# MIDDLEWARE
+# =========================
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # MUST be first
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# =========================
+# URL CONFIG
+# =========================
+
 ROOT_URLCONF = 'config.urls'
+WSGI_APPLICATION = 'config.wsgi.application'
+
+
+# =========================
+# TEMPLATES
+# =========================
 
 TEMPLATES = [
     {
@@ -60,9 +94,11 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
 
-# Database — SQLite for simplicity
+# =========================
+# DATABASE
+# =========================
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -70,7 +106,11 @@ DATABASES = {
     }
 }
 
-# Password validation
+
+# =========================
+# PASSWORD VALIDATION
+# =========================
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -78,52 +118,71 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
+
+# =========================
+# INTERNATIONALIZATION
+# =========================
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+
+# =========================
+# STATIC FILES
+# =========================
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_DIRS = []
-
-
-# WhiteNoise for serving static files in production
-if not DEBUG:
-    STORAGES = {
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
-
-# Media files (uploaded CSVs)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# CORS settings
-CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:5173,http://localhost:3000,http://localhost:8000',
-    cast=Csv()
-)
-CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
-# REST Framework
+
+# =========================
+# CORS CONFIGURATION (FIXED)
+# =========================
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://csvanalysis-frontend-fgrga7-96e962-72-61-227-173.traefik.me",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+# =========================
+# REST FRAMEWORK
+# =========================
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
 
-# OpenRouter API Configuration
+
+# =========================
+# OPENROUTER CONFIG
+# =========================
+
 OPENROUTER_API_KEY = config('OPENROUTER_API_KEY', default='')
 OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
 OPENROUTER_MODEL = config('OPENROUTER_MODEL', default='stepfun/step-3.5-flash:free')
 
-# File upload settings
-FILE_UPLOAD_MAX_MEMORY_SIZE = 26 * 1024 * 1024  # 26 MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 26 * 1024 * 1024  # 26 MB
+
+# =========================
+# FILE UPLOAD LIMITS
+# =========================
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 26 * 1024 * 1024
+DATA_UPLOAD_MAX_MEMORY_SIZE = 26 * 1024 * 1024
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
