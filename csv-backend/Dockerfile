@@ -1,18 +1,6 @@
-# Multi-stage build: build React frontend, then serve everything with Django + Gunicorn
-
-# Stage 1: Build React frontend
-FROM node:20-alpine AS frontend-build
-
-WORKDIR /app/frontend
-COPY csv-frontend/package*.json ./
-RUN npm ci
-COPY csv-frontend/ ./
-RUN npm run build
-
-# Stage 2: Python backend + built frontend
+# Backend Dockerfile — Django API server with Gunicorn
 FROM python:3.11-slim
 
-# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -24,14 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY csv-backend/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend code
-COPY csv-backend/ .
-
-# Copy built frontend into Django's static files directory
-COPY --from=frontend-build /app/frontend/dist /app/frontend_build
+COPY . .
 
 # Create necessary directories
 RUN mkdir -p /app/media /app/staticfiles

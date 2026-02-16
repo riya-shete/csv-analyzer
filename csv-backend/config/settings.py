@@ -47,10 +47,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'templates',
-            BASE_DIR / 'frontend_build',
-        ],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,11 +88,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
-
 STATICFILES_DIRS = []
-if FRONTEND_BUILD_DIR.exists():
-    STATICFILES_DIRS.append(FRONTEND_BUILD_DIR)
 
 
 # WhiteNoise for serving static files in production

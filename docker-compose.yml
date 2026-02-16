@@ -1,6 +1,6 @@
 services:
-  app:
-    build: .
+  backend:
+    build: ./csv-backend
     ports:
       - "8000:8000"
     env_file:
@@ -10,8 +10,19 @@ services:
       - ALLOWED_HOSTS=*
       - CORS_ALLOW_ALL_ORIGINS=True
     volumes:
-      - sqlite_data:/app
+      - sqlite_data:/app/db
       - media_data:/app/media
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./csv-frontend
+      args:
+        VITE_API_URL: http://localhost:8000/api
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:
