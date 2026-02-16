@@ -20,7 +20,7 @@ export default function Home() {
     const fetchReports = async () => {
         try {
             const res = await getReports();
-            setReports(res.data);
+            setReports(Array.isArray(res.data) ? res.data : []);
         } catch {
             // silently fail for reports list
         } finally {

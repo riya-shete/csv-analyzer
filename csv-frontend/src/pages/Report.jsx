@@ -23,7 +23,14 @@ export default function Report() {
     const fetchReport = async () => {
         try {
             const res = await getReport(id);
-            setReport(res.data);
+            const data = res.data;
+            // Ensure arrays are always arrays (safety against misconfigured API URL)
+            if (data && typeof data === 'object' && !Array.isArray(data)) {
+                data.columns = Array.isArray(data.columns) ? data.columns : [];
+                data.preview_data = Array.isArray(data.preview_data) ? data.preview_data : [];
+                data.follow_up_answers = Array.isArray(data.follow_up_answers) ? data.follow_up_answers : [];
+            }
+            setReport(data);
         } catch {
             setError('Failed to load report.');
         } finally {
