@@ -1,23 +1,33 @@
-# Frontend Dockerfile — Build React app, serve with Nginx
+# ----------- Build Stage -----------
 FROM node:20-alpine AS build
 
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
 
-# Build with the API URL pointing to the backend service
+# Copy only frontend package files
+COPY csv-frontend/package*.json ./
+
+RUN npm ci
+
+# Copy only frontend source code
+COPY csv-frontend/ .
+
+# Build with backend API URL
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
+
 RUN npm run build
 
-# Serve with Nginx
+
+# ----------- Production Stage -----------
 FROM nginx:alpine
 
-# Copy built files
+# Remove default config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy built frontend files
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Nginx config for SPA routing
+# SPA routing config
 RUN echo 'server { \
     listen 80; \
     server_name _; \
