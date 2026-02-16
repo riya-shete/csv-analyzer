@@ -3,13 +3,13 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copy only frontend package files
-COPY csv-frontend/package*.json ./
+# Copy package files
+COPY package*.json ./
 
 RUN npm ci
 
-# Copy only frontend source code
-COPY csv-frontend/ .
+# Copy source files
+COPY . .
 
 # Build with backend API URL
 ARG VITE_API_URL
@@ -21,13 +21,10 @@ RUN npm run build
 # ----------- Production Stage -----------
 FROM nginx:alpine
 
-# Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy built frontend files
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# SPA routing config
 RUN echo 'server { \
     listen 80; \
     server_name _; \
